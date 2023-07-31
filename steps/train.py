@@ -11,8 +11,8 @@ from azureml.core import Run
 # Get command-line arguments
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--n_estimators", type=int)
-parser.add_argument("--min_samples_split", type=float)
+parser.add_argument("--n_estimators", type=int, help="Number of trees in the forest")
+parser.add_argument("--min_samples_split", type=float, help="Minimum fraction of samples required to split an internal node")
 args = parser.parse_args()
 
 # Constants
@@ -25,6 +25,11 @@ primary_metric_name = "mean accuracy"
 
 run = Run.get_context()
 dataset = run.input_datasets[dataset_name]
+
+# Log hyperparameters
+
+run.log("Number of trees in the forest", int(args.n_estimators))
+run.log("Minimum fraction of samples required to split an internal node", float(args.min_samples_list))
 
 # Stratified train/test split
 
