@@ -73,7 +73,7 @@ run.log(primary_metric_name, float(test_score))
 save_path = Path("./saved_models")
 save_path.mkdir(exist_ok=True)
 
-filename = f"rf_clf_n_est_{args.n_estimators}_min_smp_split_{args.min_samples_split:.4f}.joblib"
+filename = f"rf_clf_n_est_{args.n_estimators}_min_smp_split_{args.min_samples_split:.4}.joblib"
 filepath = save_path / filename
 
 joblib.dump(clf, filepath)
