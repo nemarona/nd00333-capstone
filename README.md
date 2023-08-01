@@ -63,15 +63,16 @@ Our primary metric is mean accuracy, which training should maximize.
 
 We got a mean accuracy of 0.92 with a random forest with `n_estimators=200` trees and `min_samples_split=0.0406`.
 
-*TODO* Remeber to provide screenshots of the `RunDetails` widget as well as a screenshot of the best model trained with it's parameters.
-
 ![RunDetails](screenshots/Screenshot_20230801_153444_RunDetails.png)
 
 ## Model Deployment
 
 We deployed the AutoML pipeline by using an online endpoint.
 
+![Endpoint](screenshots/Screenshot_20230801_234335_active_endpoint.png)
+
 ## Screen Recording
+
 *TODO* Provide a link to a screen recording of the project in action. Remember that the screencast should demonstrate:
 - A working model
 - Demo of the deployed  model
