@@ -1,12 +1,20 @@
 import argparse
-import joblib
 from pathlib import Path
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import confusion_matrix
+
+import pandas as pd
 
 from azureml.core import Run
+
+# Constants
+
+dataset_name = "edu_heart_failure_dataset"
+target_column = "DEATH_EVENT"
+primary_metric_name = "mean accuracy"
 
 # Get command-line arguments
 
@@ -15,25 +23,19 @@ parser.add_argument("--n_estimators", type=int, help="Number of trees in the for
 parser.add_argument("--min_samples_split", type=float, help="Minimum fraction of samples required to split an internal node")
 args = parser.parse_args()
 
-# Constants
+# Log hyperparameters
 
-dataset_name = "edu_heart_failure_dataset"
-target_column = "DEATH_EVENT"
-primary_metric_name = "mean accuracy"
+run = Run.get_context()
+
+run.log("Number of trees in the forest", int(args.n_estimators))
+run.log("Minimum fraction of samples required to split an internal node", float(args.min_samples_split))
 
 # Get dataset
 
-run = Run.get_context()
-dataset = run.input_datasets[dataset_name]
-
-# Log hyperparameters
-
-run.log("Number of trees in the forest", int(args.n_estimators))
-run.log("Minimum fraction of samples required to split an internal node", float(args.min_samples_list))
+url = "https://raw.githubusercontent.com/nemarona/nd00333-capstone/master/heart_failure_clinical_records_dataset.csv"
+patients = pd.read_csv(url)
 
 # Stratified train/test split
-
-patients = dataset.to_pandas_dataframe()
 
 X = patients.drop(columns=target_column)
 y = patients[target_column]
@@ -69,19 +71,25 @@ clf.fit(X_train, y_train)
 
 test_score = clf.score(X_test, y_test)
 
+y_pred = clf.predict(X_test)
+cm = confusion_matrix(y_test, y_pred)
+
 # Log primary metric
 
 run.log(primary_metric_name, float(test_score))
 
-# Save model
+# Log confusion matrix
 
-save_path = Path("./saved_models")
-save_path.mkdir(exist_ok=True)
+json_value = {
+       "schema_type": "confusion_matrix",
+       "schema_version": "1.0.0",
+       "data": {
+           "class_labels": ["0", "1"],
+           "matrix": cm.tolist()
+       }
+   }
 
-filename = f"rf_clf_n_est_{args.n_estimators}_min_smp_split_{args.min_samples_split:.4}.joblib"
-filepath = save_path / filename
-
-joblib.dump(clf, filepath)
+run.log_confusion_matrix(name="confusion matrix", value=json_value)
 
 ##
 ##
