@@ -20,7 +20,11 @@ primary_metric_name = "mean accuracy"
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--n_estimators", type=int, help="Number of trees in the forest")
-parser.add_argument("--min_samples_split", type=float, help="Minimum fraction of samples required to split an internal node")
+parser.add_argument(
+    "--min_samples_split",
+    type=float,
+    help="Minimum fraction of samples required to split an internal node",
+)
 args = parser.parse_args()
 
 # Log hyperparameters
@@ -28,7 +32,10 @@ args = parser.parse_args()
 run = Run.get_context()
 
 run.log("Number of trees in the forest", int(args.n_estimators))
-run.log("Minimum fraction of samples required to split an internal node", float(args.min_samples_split))
+run.log(
+    "Minimum fraction of samples required to split an internal node",
+    float(args.min_samples_split),
+)
 
 # Get dataset
 
@@ -80,10 +87,11 @@ run.log(primary_metric_name, float(test_score))
 output_path = Path("outputs")
 output_path.mkdir(exist_ok=True)
 
-filename = f"model_{run.id}.joblib"
-filepath = output_path / filename
+model_filepath = output_path / f"model_{run.id}.joblib"
+scaler_filepath = output_path / f"scaler_{run.id}.joblib"
 
-joblib.dump(clf, filepath)
+joblib.dump(clf, model_filepath)
+joblib.dump(scaler, scaler_filepath)
 
 ##
 ##
