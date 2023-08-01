@@ -1,10 +1,10 @@
 import argparse
+import joblib
 from pathlib import Path
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import confusion_matrix
 
 import pandas as pd
 
@@ -71,25 +71,19 @@ clf.fit(X_train, y_train)
 
 test_score = clf.score(X_test, y_test)
 
-y_pred = clf.predict(X_test)
-cm = confusion_matrix(y_test, y_pred)
-
 # Log primary metric
 
 run.log(primary_metric_name, float(test_score))
 
-# Log confusion matrix
+# Save model
 
-json_value = {
-       "schema_type": "confusion_matrix",
-       "schema_version": "1.0.0",
-       "data": {
-           "class_labels": ["0", "1"],
-           "matrix": cm.tolist()
-       }
-   }
+output_path = Path("outputs")
+output_path.mkdir(exist_ok=True)
 
-run.log_confusion_matrix(name="confusion matrix", value=json_value)
+filename = f"model_{run.id}.joblib"
+filepath = output_path / filename
+
+joblib.dump(clf, filepath)
 
 ##
 ##
