@@ -10,39 +10,69 @@ We then deploy one of these models by using an online endpoint and test it.
 ## Dataset
 
 ### Overview
-*TODO*: Explain about the data you are using and where you got it from.
+
+For this final project we'll be using the [Heart Failure Prediction](https://www.kaggle.com/datasets/andrewmvd/heart-failure-clinical-data) dataset from Kaggle.
+This dataset contains medical records for 299 patients with heart failure,
+along with a column indicating survival as a binary variable.
+
 
 ### Task
-*TODO*: Explain the task you are going to be solving with this dataset and the features you will be using for it.
+
+Our goal is to predict survival from the rest of the data.
+This means that we are faced with a classification problem with two classes.
 
 ### Access
-*TODO*: Explain how you are accessing the data in your workspace.
+
+We manually upload the csv file and register it as an Azure ML dataset,
+which can then be accessed by name from a Jupyter notebook.
 
 ## Automated ML
-*TODO*: Give an overview of the `automl` settings and configuration you used for this experiment
+
+We configure AutoML taking the following considerations into account:
+- task is set to classification, which matches our use case
+- training_data is set to the dataset we instantiated above
+- label_column_name is the name of the target column, DEATH_EVENT
+- n_cross_validations=5 splits the dataset into five folds, using each of them in sequence as a test set while training on the remaining four, to better assess model performance
+- as primary metric to evaluate experiments we choose AUC weighted
+- early stopping is enabled, so that the experiment can end early if results are discouraging
+- we set a timeout of one hour to avoid running out of time with the Udacity VM
+- as compute_target we choose a compute cluster we created beforehand
 
 ### Results
-*TODO*: What are the results you got with your automated ML model? What were the parameters of the model? How could you have improved it?
 
-*TODO* Remeber to provide screenshots of the `RunDetails` widget as well as a screenshot of the best model trained with it's parameters.
+The `AUC_weighted` metric is 0.92. The model is a voting ensemble, whose members include several scaling steps, an XGBoost classifier, a LightGBMC classifier, and a random forest classifier.
+
+![RunDetails widget](screenshots/Screenshot_20230720_145021_RunDetails.png)
+
+![Parameters](screenshots/Screenshot_20230720_150156_fitted_model_get_params.png)
+
+![Metrics](screenshots/Screenshot_20230720_150432_best_run_get_metrics.png)
 
 ## Hyperparameter Tuning
-*TODO*: What kind of model did you choose for this experiment and why? Give an overview of the types of parameters and their ranges used for the hyperparameter search
+
+We're using a random forest (RF) classifier, because RF tend to generate reasonable predictions across a wide range of data while requiring little configuration.
+
+We're letting HyperDrive select the best combination of the hyperparameters `n_estimators`, the number of trees in the forest, and `min_samples_split`, the minimum fraction of samples required to split an internal node.
+
+We're using a "Bandit" early termination policy, which ends runs when the primary metric isn't within the specified slack factor of the most successful run.
+
+Our primary metric is mean accuracy, which training should maximize.
 
 
 ### Results
-*TODO*: What are the results you got with your model? What were the parameters of the model? How could you have improved it?
+
+We got a mean accuracy of 0.92 with a random forest with `n_estimators=200` trees and `min_samples_split=0.0406`.
 
 *TODO* Remeber to provide screenshots of the `RunDetails` widget as well as a screenshot of the best model trained with it's parameters.
 
+![RunDetails](screenshots/Screenshot_20230801_153444_RunDetails.png)
+
 ## Model Deployment
-*TODO*: Give an overview of the deployed model and instructions on how to query the endpoint with a sample input.
+
+We deployed the AutoML pipeline by using an online endpoint.
 
 ## Screen Recording
 *TODO* Provide a link to a screen recording of the project in action. Remember that the screencast should demonstrate:
 - A working model
 - Demo of the deployed  model
 - Demo of a sample request sent to the endpoint and its response
-
-## Standout Suggestions
-*TODO (Optional):* This is where you can provide information about any standout suggestions that you have attempted.
