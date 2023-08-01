@@ -1,0 +1,6 @@
+azureml
+azureml-core
+joblib
+numpy
+pandas
+scikit-learn
