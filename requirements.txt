@@ -1,5 +1,6 @@
 azureml
 azureml-core
+azureml-defaults
 joblib
 numpy
 pandas
