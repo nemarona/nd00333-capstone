@@ -82,13 +82,13 @@ test_score = clf.score(X_test, y_test)
 
 run.log(primary_metric_name, float(test_score))
 
-# Save model
+# Save model and scaler
 
 output_path = Path("outputs")
 output_path.mkdir(exist_ok=True)
 
-model_filepath = output_path / f"model_{run.id}.joblib"
-scaler_filepath = output_path / f"scaler_{run.id}.joblib"
+model_filepath = output_path / "model.joblib"
+scaler_filepath = output_path / "scaler.joblib"
 
 joblib.dump(clf, model_filepath)
 joblib.dump(scaler, scaler_filepath)
