@@ -73,7 +73,4 @@ We deployed the AutoML pipeline by using an online endpoint.
 
 ## Screen Recording
 
-*TODO* Provide a link to a screen recording of the project in action. Remember that the screencast should demonstrate:
-- A working model
-- Demo of the deployed  model
-- Demo of a sample request sent to the endpoint and its response
+Screencast: https://youtu.be/49Cz3SP_OyA
