@@ -19,6 +19,9 @@ def init():
 
 
 def run(raw_data):
+    # Load
+    data = pd.DataFrame(json.loads(raw_data)["data"])
+
     # Preprocess
     scalable_features = [
         "age",
@@ -29,9 +32,10 @@ def run(raw_data):
         "serum_sodium",
         "time",
     ]
-    data = pd.DataFrame(json.loads(raw_data)["data"])
     data[scalable_features] = scaler.transform(data[scalable_features])
+
     # Make prediction
     predictions = model.predict(data)
+
     # You can return any data type as long as it is JSON-serializable
     return predictions.tolist()
