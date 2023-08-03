@@ -376,7 +376,7 @@ Best run id and metrics:
 
 Fitted model:
 
-![Model](screenshots/Screenshot_20230802_231143_automl_fitted_model.png)
+![Model](screenshots/Screenshot_20230803_041345_automl_fitted_model.png)
 
 ## Hyperparameter Tuning
 
